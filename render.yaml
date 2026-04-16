@@ -9,14 +9,8 @@
 services:
   - type: web
     name: github-mcp-server
-    runtime: image
-    image:
-      url: ghcr.io/github/github-mcp-server:v0.33.1
-
-    # Override the default CMD (stdio) to run in HTTP server mode.
-    # The binary ENTRYPOINT is /server/github-mcp-server; this supplies the args.
-    # Render injects $PORT at runtime — the server binds to whatever port Render assigns.
-    startCommand: /server/github-mcp-server http --port $PORT
+    runtime: docker
+    dockerfilePath: ./Dockerfile
 
     # Starter is the lowest always-on plan (~$7/month as of writing).
     # The free plan exists but web services sleep after inactivity, making
@@ -24,8 +18,6 @@ services:
     plan: starter
 
     # Render checks this path periodically to confirm the service is alive.
-    # The server registers a GET /.well-known/oauth-protected-resource endpoint
-    # via its OAuth handler, which reliably returns 200 for health checks.
     healthCheckPath: /.well-known/oauth-protected-resource
 
     envVars:
